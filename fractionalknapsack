@@ -1,0 +1,63 @@
+#include <stdio.h>
+
+int main() {
+    int n, capacity;
+    printf("Enter number of items: ");
+    scanf("%d", &n);
+
+    int value[n], weight[n];
+    float ratio[n];
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value and weight of item %d: ", i + 1);
+        scanf("%d %d", &value[i], &weight[i]);
+        ratio[i] = (float)value[i] / weight[i];
+    }
+
+    printf("Enter knapsack capacity: ");
+    scanf("%d", &capacity);
+
+    // Sort items by ratio (descending)
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (ratio[i] < ratio[j]) {
+                float temp = ratio[i];
+                ratio[i] = ratio[j];
+                ratio[j] = temp;
+
+                int tempVal = value[i];
+                value[i] = value[j];
+                value[j] = tempVal;
+
+                int tempWt = weight[i];
+                weight[i] = weight[j];
+                weight[j] = tempWt;
+            }
+        }
+    }
+
+    float totalValue = 0.0;
+    int currentWeight = 0;
+
+    printf("\nItems added to knapsack:\n");
+
+    for (int i = 0; i < n; i++) {
+        if (currentWeight + weight[i] <= capacity) {
+            currentWeight += weight[i];
+            totalValue += value[i];
+            printf("Item %d: taken completely (weight = %d, value = %d)\n",
+                   i + 1, weight[i], value[i]);
+        } else {
+            int remain = capacity - currentWeight;
+            float valueTaken = ratio[i] * remain;
+            totalValue += valueTaken;
+            printf("Item %d: taken partially (weight = %d, value = %.2f)\n",
+                   i + 1, remain, valueTaken);
+            break;
+        }
+    }
+
+    printf("\nTotal value in knapsack = %.2f\n", totalValue);
+
+    return 0;
+}
